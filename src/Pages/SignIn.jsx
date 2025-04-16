@@ -1,54 +1,51 @@
-import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import { BsFillEyeFill, BsFillEyeSlashFill } from "react-icons/bs";
+import { Link, useNavigate } from "react-router-dom";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { toast } from "react-toastify";
-import {
-  signInStart,
-  signInSuccess,
-  signInFailure,
-} from "../redux/user/userSlice.js";
-import { useDispatch, useSelector } from "react-redux";
-import OAuth from "../components/OAuth.jsx";
+import OAuth from "../components/OAuth";
+import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 
-const SignIn = () => {
+export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({});
-  const { loading, error: errorMessage } = useSelector((state) => state.user);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
+
+  const { email, password } = formData;
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
-  };
+  function onChange(e) {
+    setFormData((prevState) => ({
+      ...prevState,
+      [e.target.id]: e.target.value,
+    }));
+  }
 
-  const handleSubmit = async (e) => {
+  async function onSubmit(e) {
     e.preventDefault();
-    if (!formData.email || !formData.password) {
-      return dispatch(signInFailure("Please fill out all the fields"));
-    }
+    setLoading(true);
+    setErrorMsg(null);
     try {
-      dispatch(signInStart());
-      const res = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        dispatch(signInFailure(data.message));
-      }
-      if (res.ok) {
-        dispatch(signInSuccess(data));
+      const auth = getAuth();
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      if (userCredential.user) {
         navigate("/");
-        toast.success("User logged in successfully");
+        toast.success("Successfully logged in");
       }
     } catch (error) {
-      dispatch(signInFailure(error.message));
+      setErrorMsg("Invalid User Credentials");
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
   return (
     <div className="min-h-screen mt-20">
@@ -56,44 +53,47 @@ const SignIn = () => {
         Login to your account
       </h1>
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-10 md:gap-20">
-        {/* left side */}
+        {/* Left Side */}
         <div className="flex-1">
           <img src="Login.png" alt="signIn" width={550} className="mx-auto" />
-          <p className="text-sm font-semibold capitalize mb-5">
+          <p className="text-sm font-semibold capitalize mb-5 mt-3">
             Explore the world your way. Sign in to CountryScope and unlock
             travel made simple. Your journey, your story — seamlessly mapped.
             Ready to embark?
           </p>
         </div>
-        {/* right side */}
+
+        {/* Right Side */}
         <div className="flex-1">
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div className="">
+          <form className="flex flex-col gap-4" onSubmit={onSubmit}>
+            <div>
               <Label value="Your Email" />
               <TextInput
                 type="email"
-                placeholder="name@gmail.com"
                 id="email"
-                onChange={handleChange}
+                placeholder="name@gmail.com"
+                value={email}
+                onChange={onChange}
               />
             </div>
             <div className="relative">
               <Label value="Your Password" />
               <TextInput
                 type={showPassword ? "text" : "password"}
-                placeholder="*************"
                 id="password"
-                onChange={handleChange}
+                placeholder="*************"
+                value={password}
+                onChange={onChange}
               />
               {showPassword ? (
                 <BsFillEyeSlashFill
                   className="absolute right-3 top-9 text-md cursor-pointer"
-                  onClick={() => setShowPassword((prevState) => !prevState)}
+                  onClick={() => setShowPassword((prev) => !prev)}
                 />
               ) : (
                 <BsFillEyeFill
                   className="absolute right-3 top-9 text-md cursor-pointer"
-                  onClick={() => setShowPassword((prevState) => !prevState)}
+                  onClick={() => setShowPassword((prev) => !prev)}
                 />
               )}
             </div>
@@ -123,15 +123,13 @@ const SignIn = () => {
               Sign Up
             </Link>
           </div>
-          {errorMessage && (
-            <Alert className="mt-7 py-3 bg-gradient-to-r from-red-100 via-red-300 to-red-400 shadow-shadowOne text-center text-red-600 text-base tracking-wide animate-bounce">
-              {errorMessage}
+          {errorMsg && (
+            <Alert className="mt-7 py-3 bg-gradient-to-r from-red-100 via-red-300 to-red-400 shadow-md text-center text-red-600 text-base animate-bounce">
+              {errorMsg}
             </Alert>
           )}
         </div>
       </div>
     </div>
   );
-};
-
-export default SignIn;
+}

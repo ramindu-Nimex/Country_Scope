@@ -1,35 +1,19 @@
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
+import { useEffect, useState } from "react";
 import { FaMoon, FaSun } from "react-icons/fa";
+import { AiOutlineSearch } from "react-icons/ai";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/themeSlice";
-import { AiOutlineSearch } from "react-icons/ai";
-import { signOutSuccess } from "../redux/user/userSlice";
-import { useEffect, useState } from "react";
 
 const Header = () => {
   const [term, setTerm] = useState("");
+  const [user, setUser] = useState(null);
   const path = useLocation().pathname;
-  const { theme } = useSelector((state) => state.theme);
-  const { currentUser } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const handleSignout = async () => {
-    try {
-      const res = await fetch("/api/user/signout", {
-        method: "POST",
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        console.log(data.message);
-      } else {
-        dispatch(signOutSuccess());
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+  const dispatch = useDispatch();
+  const { theme } = useSelector((state) => state.theme);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -39,6 +23,24 @@ const Header = () => {
     }
     setTerm("");
   };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(getAuth());
+      setUser(null);
+      navigate("/sign-in");
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <Navbar className="border-b-2 sticky top-0 bg-slate-200 shadow-md z-40">
@@ -70,36 +72,39 @@ const Header = () => {
         >
           {theme === "light" ? <FaSun /> : <FaMoon />}
         </Button>
-        {currentUser ? (
+        {user ? (
           <Dropdown
             arrowIcon={false}
             inline
             label={
-              <Avatar img={currentUser.profilePicture} alt="user" rounded />
+              <Avatar
+                img={
+                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1EbhMbqdCA85UXXAxxXvcc0PN9xvHOZF6yYVUVRAYSlQC_B9aPU-tEdU&s"
+                }
+                alt="user"
+                rounded
+              />
             }
           >
             <Dropdown.Header>
-              <span className="block text-sm">@{currentUser.username}</span>
+              <span className="block text-sm">
+                @{user.displayName || "User"}
+              </span>
               <span className="block text-sm font-medium truncate">
-                {currentUser.email}
+                {user.email}
               </span>
             </Dropdown.Header>
-            {/* <Link to="/dashboard?tab=profile">
-              <Dropdown.Item>Profile</Dropdown.Item>
-            </Link> */}
             <Dropdown.Divider />
-            <Dropdown.Item onClick={handleSignout}>Sign Out</Dropdown.Item>
+            <Dropdown.Item onClick={handleSignOut}>Sign Out</Dropdown.Item>
           </Dropdown>
         ) : (
-          <div className="flex flex-row gap-2">
-            <Link to="/sign-in">
-              <Button gradientDuoTone="purpleToBlue" outline>
-                Sign In
-              </Button>
-            </Link>
-          </div>
+          <Link to="/sign-in">
+            <Button gradientDuoTone="purpleToBlue" outline>
+              Sign In
+            </Button>
+          </Link>
         )}
-        <Navbar.Toggle className="text-sm" />
+        <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
         <Navbar.Link active={path === "/"} as={"div"}>

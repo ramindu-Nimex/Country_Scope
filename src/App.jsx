@@ -1,11 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from "./components/Header"
+import Header from "./components/Header";
 import HomePage from "./Pages/HomePage";
 import FooterComponent from "./components/FooterComponent";
 import SignUp from "./Pages/SignUp";
 import SignIn from "./Pages/SignIn";
 import SearchCountryPage from "./Pages/SearchCountryPage";
 import AboutUsPage from "./Pages/AboutUsPage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   return (
@@ -23,8 +25,20 @@ const App = () => {
         </div>
         <FooterComponent />
       </Router>
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
