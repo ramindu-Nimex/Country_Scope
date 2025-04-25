@@ -28,6 +28,7 @@ export default function OAuth() {
         });
       }
       navigate("/");
+      toast.success("Successfully logged in");
     } catch (error) {
       toast.error("Couldn't Authorized with Google");
     }
@@ -37,7 +38,7 @@ export default function OAuth() {
       type="button"
       gradientDuoTone="pinkToOrange"
       onClick={onGoogleClick}
-      className="uppercase"
+      className="uppercase w-full"
     >
       <FcGoogle className="text-2xl bg-white rounded-full mr-2" /> Continue With
       Google

@@ -48,86 +48,116 @@ export default function SignIn() {
   }
 
   return (
-    <div className="min-h-screen mt-20">
-      <h1 className="text-3xl text-center mt-6 font-extrabold underline text-blue-950 dark:text-slate-300">
-        Login to your account
-      </h1>
-      <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-10 md:gap-20">
-        {/* Left Side */}
-        <div className="flex-1">
-          <img src="Login.png" alt="signIn" width={550} className="mx-auto" />
-          <p className="text-sm font-semibold capitalize mb-5 mt-3">
-            Explore the world your way. Sign in to CountryScope and unlock
-            travel made simple. Your journey, your story — seamlessly mapped.
-            Ready to embark?
+    <div className="min-h-screen">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-green-900 dark:text-lime-600">
+            Discover CountryScope
+          </h1>
+          <p className="mt-2 text-lg text-green-700 dark:text-lime-800">
+            Your Global Journey Begins Here
           </p>
         </div>
 
-        {/* Right Side */}
-        <div className="flex-1">
-          <form className="flex flex-col gap-4" onSubmit={onSubmit}>
-            <div>
-              <Label value="Your Email" />
-              <TextInput
-                type="email"
-                id="email"
-                placeholder="name@gmail.com"
-                value={email}
-                onChange={onChange}
-              />
+        <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto rounded-2xl shadow-2xl dark:border dark:border-teal-600 overflow-hidden backdrop-blur-sm">
+          {/* Left Side - Map Image */}
+          <div className="lg:w-[55%] relative">
+            <img
+              src="/signIn.jpeg"
+              alt="World Map"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-green-900/50 to-emerald-800/50">
+              <div className="absolute bottom-16 left-16 text-white max-w-lg">
+                <h2 className="text-xl md:text-4xl font-bold mb-4">"Find the Globe</h2>
+                <p className="text-sm md:text-lg leading-relaxed">
+                  Explore the world your way. Sign in to CountryScope and unlock
+                  travel made simple. Your journey, your story — seamlessly
+                  mapped. Ready to embark?nd economic data. Get real-time
+                  updates about countries around the world.
+                </p>
+              </div>
             </div>
-            <div className="relative">
-              <Label value="Your Password" />
-              <TextInput
-                type={showPassword ? "text" : "password"}
-                id="password"
-                placeholder="*************"
-                value={password}
-                onChange={onChange}
-              />
-              {showPassword ? (
-                <BsFillEyeSlashFill
-                  className="absolute right-3 top-9 text-md cursor-pointer"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                />
-              ) : (
-                <BsFillEyeFill
-                  className="absolute right-3 top-9 text-md cursor-pointer"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                />
-              )}
-            </div>
-            <Button
-              type="submit"
-              gradientDuoTone="purpleToBlue"
-              className="uppercase"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <Spinner size="sm" />
-                  <span className="pl-3">Loading...</span>
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </Button>
-            <div className="flex items-center before:border-t before:flex-1 before:border-gray-300  after:border-t after:flex-1 after:border-gray-300">
-              <p className="text-center font-semibold mx-4">OR</p>
-            </div>
-            <OAuth />
-          </form>
-          <div className="flex gap-2 text-sm mt-5">
-            <span>Don't have an account?</span>
-            <Link to="/sign-up" className="text-blue-700">
-              Sign Up
-            </Link>
           </div>
-          {errorMsg && (
-            <Alert className="mt-7 py-3 bg-gradient-to-r from-red-100 via-red-300 to-red-400 shadow-md text-center text-red-600 text-base animate-bounce">
-              {errorMsg}
-            </Alert>
-          )}
+
+          {/* Right Side - Form */}
+          <div className="lg:w-[45%] p-8 lg:p-12 backdrop-blur-sm">
+            <h2 className="text-2xl font-bold text-green-900 dark:text-lime-600 mb-6">
+              Sign In to Your Account
+            </h2>
+
+            <form onSubmit={onSubmit} className="space-y-6">
+              <div>
+                <Label className="block text-sm font-medium text-green-800 dark:text-lime-700">
+                  Email
+                </Label>
+                <TextInput
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={onChange}
+                  placeholder="name@example.com"
+                  className="mt-1 w-full rounded-lg border border-green-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                />
+              </div>
+
+              <div className="relative">
+                <Label className="block text-sm font-medium text-green-800 dark:text-lime-700">
+                  Password
+                </Label>
+                <div className="relative">
+                  <TextInput
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    value={password}
+                    onChange={onChange}
+                    placeholder="Enter your password"
+                    className="mt-1 w-full rounded-lg border border-green-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-4 text-md cursor-pointer text-green-600 dark:text-lime-600 hover:text-green-700"
+                  >
+                    {showPassword ? <BsFillEyeSlashFill /> : <BsFillEyeFill />}
+                  </button>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-teal-200 to-lime-200 text-gray-900 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-lime-200 dark:focus:ring-teal-700"
+              >
+                {loading ? "Signing in..." : "SIGN IN"}
+              </Button>
+
+              <div className="flex items-center before:border-t before:flex-1 before:border-gray-300  after:border-t after:flex-1 after:border-gray-300">
+                <p className="text-center font-semibold mx-4 dark:text-lime-600">OR</p>
+              </div>
+
+              <OAuth />
+
+              <div className="text-center mt-4">
+                <p className="text-sm text-green-700 dark:text-lime-700">
+                  Don't have an account?{" "}
+                  <Link
+                    to="/sign-up"
+                    className="text-green-600 hover:text-green-800 dark:text-lime-600 font-medium"
+                  >
+                    Sign Up
+                  </Link>
+                </p>
+              </div>
+            </form>
+
+            {errorMsg && (
+              <Alert className="mt-7 py-3 bg-gradient-to-r from-red-100 via-red-300 to-red-400 shadow-md text-center text-red-600 text-base animate-bounce">
+                {errorMsg}
+              </Alert>
+            )}
+          </div>
         </div>
       </div>
     </div>
