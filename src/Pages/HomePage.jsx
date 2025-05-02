@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "flowbite-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -71,34 +71,34 @@ const HomePage = () => {
                     >
                       Explore Countries
                     </Button>
-                    <Button
-                      className="bg-gradient-to-br from-purple-600 to-blue-500 text-white hover:bg-gradient-to-bl focus:ring-blue-300 dark:focus:ring-blue-800"
-                    >
-                      Learn More
-                    </Button>
+                    <Link to="/about">
+                      <Button className="bg-gradient-to-br from-purple-600 to-blue-500 text-white hover:bg-gradient-to-bl focus:ring-blue-300 dark:focus:ring-blue-800">
+                        Learn More
+                      </Button>
+                    </Link>
                   </div>
 
                   {/* Search Bar */}
                   <div className="mt-8 max-w-md">
-                    <div
-                      className="bg-white/10 backdrop-blur-sm rounded-full p-2 shadow-lg border border-white/20 flex items-center"
+                    <form
                       onSubmit={handleSubmit}
+                      className="bg-white/10 backdrop-blur-sm rounded-full p-2 shadow-lg border border-white/20 flex items-center"
                     >
                       <input
                         type="text"
                         placeholder="Search for a country..."
-                        className="flex-1 bg-transparent border-none outline-none px-4 py-2 text-white placeholder-gray-300"
+                        className="flex-1 bg-transparent border-none outline-none focus:ring-0 focus:border-transparent px-4 py-2 text-white placeholder-gray-300"
                         value={term}
                         onChange={(e) => setTerm(e.target.value)}
                       />
                       <Button
+                        type="submit"
                         pill
                         className="bg-gradient-to-br from-purple-600 to-blue-500 text-white hover:bg-gradient-to-bl focus:ring-blue-300 dark:focus:ring-blue-800"
-                        onClick={handleGetStarted}
                       >
                         Search
                       </Button>
-                    </div>
+                    </form>
                   </div>
                 </div>
 
